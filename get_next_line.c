@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/24 12:17:45 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/25 15:58:57 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,28 @@ void	checker(const int fd, char **fd_arr)
 		ft_strdel(&fd_arr[fd]);//deleting the old buffer because tmp has the new one
 		fd_arr[fd] = tmp;//fd_arr becomes the new tmp file
 	}
-//	shift_over(**fd_arr[fd]);
-	if ((ft_strchr(fd_arr[fd], '\n') != NULL))//strchr searchers for the '\n' and does not find '\0' it executes the bellow
+	shift_over(**fd_arr[fd]);
+/*	if ((ft_strchr(fd_arr[fd], '\n') != NULL))//strchr searchers for the '\n' and does not find '\0' it executes the bellow
 			{
-				ft_repstr(&fd_arr[fd], '\n', '\0');//replace the '\n' with a '\0'
+				ft_repchr(&fd_arr[fd], '\n', '\0');//replace the '\n' with a '\0'
 				//return a 1
 			}
 	else if (ft_strlen(fd_arr[fd]) != 0)
-		fd_arr[fd] = ft_strdup(fd_arr[fd]);//if the string doesn't have a '\n' it must return the current string
+		fd_arr[fd] = ft_strdup(fd_arr[fd]);//if the string doesn't have a '\n' it must return the current string */
 }
 
-//void shift_over(char **line)
-//{
-//	char *ptr = ft_strchr(*line, '\n');//gives a pointer to the '\n'
-//	int len = ptr - *line;//dlts the '\n'
-//	*line = ft_strsub(*line, 0, len);//creates a fresh string with everything before '\n'
-//	char * tmp = ft_strsub(*line, len + 1, /*rest of the string*/);//stores the rest of the str
-//	free(fd_arr[fd]);//removes the str
-//	fd_arr[fd] = tmp;//becomes the str of the rest
-//}
+void shift_over(char **fd_arr)
+{
+	char *;
+	char after;
+	char *ptr = ft_strchr(*line, '\n');//gives a pointer to the '\n'
+	int len = ptr - *line;//dlts the '\n'
+	*line = ft_strsub(fd_arr, 0, len);//creates a fresh string with everything before '\n'
+	after = ft_strlen(fd_arr + len + 1);
+	char * tmp = ft_strsub(*(fd_arr + len + 1, 0, after);//stores the rest of the str
+	free(fd_arr);//removes the str
+	fd_arr = tmp;//becomes the str of the rest
+}
 
 int		get_next_line(const int fd, char **line)
 {
@@ -71,7 +74,7 @@ int		get_next_line(const int fd, char **line)
 	//remember that GNL returns an int! -1 for error, 1 for I have read a line, and 0 once you have reached the end of the file.
 
 }
-
+/*
 int		main(void)
 {
 	char *line;
@@ -82,4 +85,4 @@ int		main(void)
 		free(line);
 	}
 	return (0);
-}
+}*/

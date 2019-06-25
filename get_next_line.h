@@ -6,13 +6,13 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/14 14:44:49 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/21 10:38:06 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/25 15:18:06 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 1024
+# define BUFF_SIZE 1
 
 # include <sys/types.h>
 # include <sys/uio.h>
