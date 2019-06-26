@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/25 15:58:57 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/26 13:46:29 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,75 +14,53 @@
 
 void	checker(const int fd, char **fd_arr)
 {
-	char buff[BUFF_SIZE + 1];//buff size is the amount of bytes it counts at a time
-	char *tmp;
-	int ret;
+	char	buff[BUFF_SIZE + 1];
+	char	*tmp;
+	int		ret;
 
-	while(ft_strchr(fd_arr[fd], '\n') == NULL)//checks for the /n and if it doesn't fnd it it must return 0
+	while (ft_strchr(fd_arr[fd], '\n') == NULL)
 	{
-		if((ret = read(fd, buff, BUFF_SIZE)) == 0)//reads the folder and adds buffer size to it
-			break;// if it reaches 0 which is the end of the file it breaks
-		buff[ret] = '\0';// read returns the str alone without a '\0' so i add the '\0'
-		tmp = ft_strjoin(fd_arr[fd], buff);//im joining the current buffer with the new one
-		ft_strdel(&fd_arr[fd]);//deleting the old buffer because tmp has the new one
-		fd_arr[fd] = tmp;//fd_arr becomes the new tmp file
+		if ((ret = read(fd, buff, BUFF_SIZE)) == 0)
+			break ;
+		buff[ret] = '\0';
+		tmp = ft_strjoin(fd_arr[fd], buff);
+		ft_strdel(&fd_arr[fd]);
+		fd_arr[fd] = tmp;
 	}
-	shift_over(**fd_arr[fd]);
-/*	if ((ft_strchr(fd_arr[fd], '\n') != NULL))//strchr searchers for the '\n' and does not find '\0' it executes the bellow
-			{
-				ft_repchr(&fd_arr[fd], '\n', '\0');//replace the '\n' with a '\0'
-				//return a 1
-			}
-	else if (ft_strlen(fd_arr[fd]) != 0)
-		fd_arr[fd] = ft_strdup(fd_arr[fd]);//if the string doesn't have a '\n' it must return the current string */
 }
 
-void shift_over(char **fd_arr)
+void	shift_over(char **fd_arr, char **line)
 {
-	char *;
-	char after;
-	char *ptr = ft_strchr(*line, '\n');//gives a pointer to the '\n'
-	int len = ptr - *line;//dlts the '\n'
-	*line = ft_strsub(fd_arr, 0, len);//creates a fresh string with everything before '\n'
-	after = ft_strlen(fd_arr + len + 1);
-	char * tmp = ft_strsub(*(fd_arr + len + 1, 0, after);//stores the rest of the str
-	free(fd_arr);//removes the str
-	fd_arr = tmp;//becomes the str of the rest
+	int		after;
+	char	*ptr;
+	int		len;
+	char	*tmp;
+
+	*ptr = ft_strchr(*fd_arr, '\n');
+	if (ptr != NULL)
+		len = ptr - *fd_arr;
+	else
+		len = 0;
+	*line = ft_strsub(*fd_arr, 0, len);
+	after = ft_strlen(*(fd_arr) + len + 1);
+	*tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
+	free(*fd_arr);
+	*fd_arr = tmp;
 }
 
 int		get_next_line(const int fd, char **line)
 {
-	char buff[BUFF_SIZE + 1];// plus 1 is for that null terminator
-	char *tmp;
-	static char* fd_arr[1024];// the number is the maximum amount of files that can be opened at a time for the bonus section
+	char			buff[BUFF_SIZE + 1];
+	static char		*fd_arr[1024];
 
 	if (fd < 0 || read(fd, buff, 0) < 0 || !line)
-		return (-1);// error detected
-	if(fd_arr[fd] == NULL)
-		fd_arr[fd] = ft_strnew(0);// if the string is empty a newstring with zero bytes is Created
-	read(fd, buff, 0);// will read the file from 0
-
-	checker(fd, fd_arr);// calls my funtion and looks for the ')\n' to replace with a '\0'
-	*line = fd_arr[fd];// to make the new file with the '\0' = to *line that was a '\n'
+		return (-1);
+	if (fd_arr[fd] == NULL)
+		fd_arr[fd] = ft_strnew(0);
+	checker(fd, fd_arr);
+	shift_over(&fd_arr[fd], line);
 	if (**line != '\0')
-		return(1);// i have read a line
+		return (1);
 	else
-		return (0);// i have over reached the EOF
-
-	//after the checker do a bunch of checks
-
-	//remember that GNL returns an int! -1 for error, 1 for I have read a line, and 0 once you have reached the end of the file.
-
+		return (0);
 }
-/*
-int		main(void)
-{
-	char *line;
-	while (get_next_line(0, &line) > 0)
-	{
-		ft_putstr(line);
-		ft_putchar('\n');
-		free(line);
-	}
-	return (0);
-}*/
