@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/26 13:46:29 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/26 15:20:18 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,12 @@ void	shift_over(char **fd_arr, char **line)
 	int		len;
 	char	*tmp;
 
-	*ptr = ft_strchr(*fd_arr, '\n');
-	if (ptr != NULL)
-		len = ptr - *fd_arr;
-	else
-		len = 0;
+	if (!(ptr = ft_strchr(*fd_arr, '\n')))
+		ptr = ft_strchr(*fd_arr, '\0');
+	len = ptr - *fd_arr;
 	*line = ft_strsub(*fd_arr, 0, len);
 	after = ft_strlen(*(fd_arr) + len + 1);
-	*tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
+	tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
 	free(*fd_arr);
 	*fd_arr = tmp;
 }
