@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/26 15:20:18 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/28 14:48:55 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,12 @@ void	checker(const int fd, char **fd_arr)
 		if ((ret = read(fd, buff, BUFF_SIZE)) == 0)
 			break ;
 		buff[ret] = '\0';
-		tmp = ft_strjoin(fd_arr[fd], buff);
+		if (!(tmp = ft_strjoin(fd_arr[fd], buff)))
+			return ;
 		ft_strdel(&fd_arr[fd]);
-		fd_arr[fd] = tmp;
+		if (!(fd_arr[fd] = ft_strdup(tmp)))
+			return ;
+		free(tmp);
 	}
 }
 
@@ -49,14 +52,17 @@ void	shift_over(char **fd_arr, char **line)
 int		get_next_line(const int fd, char **line)
 {
 	char			buff[BUFF_SIZE + 1];
-	static char		*fd_arr[1024];
+	static char		*fd_arr[1];
 
 	if (fd < 0 || read(fd, buff, 0) < 0 || !line)
 		return (-1);
-	if (fd_arr[fd] == NULL)
-		fd_arr[fd] = ft_strnew(0);
+	if (fd_arr[fd] == NULL && !(fd_arr[fd] = ft_strnew(0)))
+		return (-1);
 	checker(fd, fd_arr);
-	shift_over(&fd_arr[fd], line);
+	if (fd_arr[fd])
+		shift_over(&fd_arr[fd], line);
+	else
+		return (-1);
 	if (**line != '\0')
 		return (1);
 	else
