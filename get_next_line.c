@@ -6,13 +6,13 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/28 14:48:55 by znazam           ###   ########.fr       */
+/*   Updated: 2019/06/29 15:51:24 by vscott           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	checker(const int fd, char **fd_arr)
+static int	checker(const int fd, char **fd_arr)
 {
 	char	buff[BUFF_SIZE + 1];
 	char	*tmp;
@@ -24,15 +24,14 @@ void	checker(const int fd, char **fd_arr)
 			break ;
 		buff[ret] = '\0';
 		if (!(tmp = ft_strjoin(fd_arr[fd], buff)))
-			return ;
+			return (ret);
 		ft_strdel(&fd_arr[fd]);
-		if (!(fd_arr[fd] = ft_strdup(tmp)))
-			return ;
-		free(tmp);
+		fd_arr[fd] = tmp;
 	}
+	return (ret);
 }
 
-void	shift_over(char **fd_arr, char **line)
+static void	shift_over(char **fd_arr, char **line)
 {
 	int		after;
 	char	*ptr;
@@ -44,27 +43,32 @@ void	shift_over(char **fd_arr, char **line)
 	len = ptr - *fd_arr;
 	*line = ft_strsub(*fd_arr, 0, len);
 	after = ft_strlen(*(fd_arr) + len + 1);
-	tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
+	if (!(*ptr))
+		tmp = ft_strnew(0);
+	else
+		tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
 	free(*fd_arr);
 	*fd_arr = tmp;
 }
 
-int		get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line)
 {
 	char			buff[BUFF_SIZE + 1];
-	static char		*fd_arr[1];
+	static char		*fd_arr[1024];
+	int				ret;
 
 	if (fd < 0 || read(fd, buff, 0) < 0 || !line)
 		return (-1);
 	if (fd_arr[fd] == NULL && !(fd_arr[fd] = ft_strnew(0)))
 		return (-1);
-	checker(fd, fd_arr);
+	ret = checker(fd, fd_arr);
+	if (ret < BUFF_SIZE && !ft_strlen(fd_arr[fd]))
+		return (0);
 	if (fd_arr[fd])
+	{
 		shift_over(&fd_arr[fd], line);
+		return (1);
+	}
 	else
 		return (-1);
-	if (**line != '\0')
-		return (1);
-	else
-		return (0);
 }
