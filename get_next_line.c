@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/29 15:51:24 by vscott           ###   ########.fr       */
+/*   Updated: 2019/06/30 09:26:30 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	checker(const int fd, char **fd_arr)
 		buff[ret] = '\0';
 		if (!(tmp = ft_strjoin(fd_arr[fd], buff)))
 			return (ret);
-		ft_strdel(&fd_arr[fd]);
+		free(fd_arr[fd]);
 		fd_arr[fd] = tmp;
 	}
 	return (ret);
