@@ -5,70 +5,64 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/10 11:01:26 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/30 09:26:30 by znazam           ###   ########.fr       */
+/*   Created: 2019/08/06 08:24:25 by znazam            #+#    #+#             */
+/*   Updated: 2019/08/06 08:24:28 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int	checker(const int fd, char **fd_arr)
+static t_list	*get_file_buffer(size_t fd, t_list **start)
 {
-	char	buff[BUFF_SIZE + 1];
-	char	*tmp;
-	int		ret;
+	t_list	*tmp;
 
-	while (ft_strchr(fd_arr[fd], '\n') == NULL)
+	tmp = *start;
+	while (tmp)
 	{
-		if ((ret = read(fd, buff, BUFF_SIZE)) == 0)
+		if (tmp->content_size == fd)
+			return (tmp);
+		tmp = tmp->next;
+	}
+	tmp = ft_lstnew("\0", fd);
+	ft_lstadd(start, tmp);
+	return (tmp);
+}
+
+static size_t	ft_endl_pos(const char *s)
+{
+	char	*c;
+
+	c = (char *)s;
+	while (*c && *c != '\n')
+		c++;
+	return (c - s);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	char			l_b[BUFF_SIZE + 1];
+	size_t			bytes_read;
+	static t_list	*buffer_list;
+	t_list			*f_b;
+
+	CHECK_RETURN(fd < 0 || line == NULL || read(fd, l_b, 0) < 0, -1);
+	f_b = get_file_buffer(fd, &buffer_list);
+	if (!f_b->content)
+		f_b->content = ft_strnew(1);
+	while ((bytes_read = read(fd, l_b, BUFF_SIZE)))
+	{
+		l_b[bytes_read] = 0;
+		ft_swapnfree(&f_b->content, ft_strjoin(f_b->content, l_b));
+		CHECK_RETURN(!f_b->content, -1);
+		if (ft_strchr(f_b->content, '\n'))
 			break ;
-		buff[ret] = '\0';
-		if (!(tmp = ft_strjoin(fd_arr[fd], buff)))
-			return (ret);
-		free(fd_arr[fd]);
-		fd_arr[fd] = tmp;
 	}
-	return (ret);
-}
-
-static void	shift_over(char **fd_arr, char **line)
-{
-	int		after;
-	char	*ptr;
-	int		len;
-	char	*tmp;
-
-	if (!(ptr = ft_strchr(*fd_arr, '\n')))
-		ptr = ft_strchr(*fd_arr, '\0');
-	len = ptr - *fd_arr;
-	*line = ft_strsub(*fd_arr, 0, len);
-	after = ft_strlen(*(fd_arr) + len + 1);
-	if (!(*ptr))
-		tmp = ft_strnew(0);
+	CHECK_RETURN(bytes_read < BUFF_SIZE && !*(char *)(f_b->content), 0);
+	*line = ft_strndup(f_b->content, ft_endl_pos(f_b->content));
+	if (ft_strlen(*line) < ft_strlen(f_b->content))
+		ft_swapnfree(&f_b->content,
+			ft_strdup(f_b->content + ft_strlen(*line) + 1));
 	else
-		tmp = ft_strsub(*(fd_arr) + len + 1, 0, after);
-	free(*fd_arr);
-	*fd_arr = tmp;
-}
-
-int			get_next_line(const int fd, char **line)
-{
-	char			buff[BUFF_SIZE + 1];
-	static char		*fd_arr[1024];
-	int				ret;
-
-	if (fd < 0 || read(fd, buff, 0) < 0 || !line)
-		return (-1);
-	if (fd_arr[fd] == NULL && !(fd_arr[fd] = ft_strnew(0)))
-		return (-1);
-	ret = checker(fd, fd_arr);
-	if (ret < BUFF_SIZE && !ft_strlen(fd_arr[fd]))
-		return (0);
-	if (fd_arr[fd])
-	{
-		shift_over(&fd_arr[fd], line);
-		return (1);
-	}
-	else
-		return (-1);
+		ft_strdel((char **)&f_b->content);
+	return (1);
 }
