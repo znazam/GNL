@@ -6,7 +6,7 @@
 /*   By: znazam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/14 14:44:49 by znazam            #+#    #+#             */
-/*   Updated: 2019/06/30 10:13:53 by znazam           ###   ########.fr       */
+/*   Updated: 2019/08/06 08:38:52 by znazam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 # include <unistd.h>
 # include "libft/libft.h"
+# include <stdlib.h>
 
 int	get_next_line(const int fd, char **line);
 
